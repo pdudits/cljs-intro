@@ -1,0 +1,4 @@
+== Building the presentation
+
+  bundler install --path vendor
+  bundler exec guard

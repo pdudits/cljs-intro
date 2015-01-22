@@ -1,0 +1,4 @@
+presentation/vendor
+presentation/*.html
+presentation/Gemfile.lock
+presentation/.bundle

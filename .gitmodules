@@ -1,0 +1,6 @@
+[submodule "presentation/asciidoctor-reveal.js"]
+	path = presentation/asciidoctor-reveal.js
+	url = https://github.com/asciidoctor/asciidoctor-reveal.js/
+[submodule "presentation/reveal.js"]
+	path = presentation/reveal.js
+	url = https://github.com/hakimel/reveal.js/
