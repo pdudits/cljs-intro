@@ -115,3 +115,8 @@ image::3-D_Tic-Tac-Toe_Atari_2600.png[float="left"]
 * In ClojureScript
 * With ReactJS components
 * With Dynamic evaluation in IDE
+
+== Create a new project
+
+  lein new reagent tttoe-3d +test
+
