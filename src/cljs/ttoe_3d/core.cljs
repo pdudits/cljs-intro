@@ -6,12 +6,34 @@
               [goog.history.EventType :as EventType])
     (:import goog.History))
 
+; one row would be:
+;[\space \space \space \space]
+
+(defn vec4 [x] (vec (replicate 4 x)))
+(def DIMENSIONS 2)
+
+;(vec4 \space)
+;(vec4 (vec4 \space))
+
+;(-> \space vec4 vec4 vec4)
+;((comp vec4 vec4 vec4) \space)
+
+(def board ((apply comp (replicate DIMENSIONS vec4)) \space))
+
+(def game (atom {:board board}))
+
+(defn show-row [row]
+  [:tr (map (fn [c] [:td c]) row)])
+(defn show-plane [plane]
+  [:table.plane (map show-row plane)])
+;(vec4 \a)
+
 ;; -------------------------
 ;; Views
 
 (defn home-page []
-  [:div [:h2 "Welcome to ttoe-3d"]
-   [:div [:a {:href "#/about"} "go to about page"]]])
+  [:div [:h2 "Tic Tac Toe 3D"]
+   (show-plane (@game :board))])
 
 (defn about-page []
   [:div [:h2 "About ttoe-3d"]
