@@ -44,5 +44,7 @@
 ;; -------------------------
 ;; Initialize app
 (defn init! []
-  (hook-browser-navigation!)
   (reagent/render-component [current-page] (.getElementById js/document "app")))
+
+;; need to run this after routes have been defined
+(hook-browser-navigation!)
