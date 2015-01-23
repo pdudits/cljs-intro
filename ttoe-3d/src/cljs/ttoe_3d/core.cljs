@@ -26,7 +26,9 @@
   [:tr (map (fn [c] [:td c]) row)])
 (defn show-plane [plane]
   [:table.plane (map show-row plane)])
-;(vec4 \a)
+
+;(@game :board)
+;(swap! game assoc-in [:board 0 0] \x)
 
 ;; -------------------------
 ;; Views
