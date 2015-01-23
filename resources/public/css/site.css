@@ -10,7 +10,7 @@ body {
 }
 
 h1, h2, h3 {
-  color: #000;
+  color: #222;
 }
 h1 {
   font-size: 2.5em
@@ -31,4 +31,19 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table.plane td {
+  border: 1px solid;
+  width: 2em;
+  height: 2em;
+  text-align:center;
+}
+
+table.plane td:hover {
+  background-color: lightgray;
 }
