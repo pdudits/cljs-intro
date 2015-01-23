@@ -20,15 +20,21 @@
 
 (def board ((apply comp (replicate DIMENSIONS vec4)) \space))
 
-(def game (atom {:board board}))
+(def game (atom {:board board :player \o}))
 
-(defn show-row [row]
-  [:tr (map (fn [c] [:td c]) row)])
+(defn turn-player! [] (:player (swap! game update-in [:player] #(if (= % \x) \o \x))))
+;(turn-player!)
+
+(defn show-row [i row]
+  [:tr (map-indexed (fn [j c]
+                      [:td {:title (str i j)
+                            :on-click #(swap! game assoc-in [:board i j] (turn-player!))}
+                       c]) row)])
 (defn show-plane [plane]
-  [:table.plane (map show-row plane)])
+  [:table.plane (map-indexed show-row plane)])
 
 ;(@game :board)
-;(swap! game assoc-in [:board 0 0] \x)
+;(swap! game assoc-in [:board 0 1] \x)
 
 ;; -------------------------
 ;; Views
