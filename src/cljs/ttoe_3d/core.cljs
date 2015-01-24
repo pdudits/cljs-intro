@@ -24,15 +24,21 @@
 (def game (atom {:board board :player \o}))
 
 (defn turn-player! [] (:player (swap! game update-in [:player] #(if (= % \x) \o \x))))
+(defn next-player [player] (if (= player \x) \o \x))
 ;(turn-player!)
 
 ;after you spend a day golfing the interface to consist of three simple functions, you need a
 ;tracer to actually understand what you've written,  and why it breaks so bad
 
+(defn move [game coord player]
+  (if (= \space (get-in game (cons :board coord)))
+    {:board (assoc-in (:board game) coord player)
+     :player (next-player player)}))
+
 ;(trace/trace-forms {:tracer trace/default-tracer}
 (defn show-cell [cell coords nest]
   [:td {:title (str coords)
-        :on-click #(swap! game assoc-in (cons :board coords) (turn-player!))}
+        :on-click #(swap! game merge (move @game coords (:player @game)))}
        cell])
 
 (defn show-row [row coords nest]
