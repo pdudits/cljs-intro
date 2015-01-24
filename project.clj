@@ -22,7 +22,8 @@
                  [selmer "0.8.0"]
                  [environ "1.0.0"]
                  [leiningen "2.5.1"]
-                 [figwheel "0.1.6-SNAPSHOT"]]
+                 [figwheel "0.1.6-SNAPSHOT"]
+                 [spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
 
   :plugins [
             [lein-cljsbuild "1.0.4"]
