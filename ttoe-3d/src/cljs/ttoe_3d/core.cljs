@@ -3,6 +3,7 @@
               [reagent.session :as session]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
+              [clairvoyant.core :as trace :include-macros true]
               [goog.history.EventType :as EventType])
     (:import goog.History))
 
@@ -25,23 +26,59 @@
 (defn turn-player! [] (:player (swap! game update-in [:player] #(if (= % \x) \o \x))))
 ;(turn-player!)
 
-(defn show-row [i row]
-  [:tr (map-indexed (fn [j c]
-                      [:td {:title (str i j)
-                            :on-click #(swap! game assoc-in [:board i j] (turn-player!))}
-                       c]) row)])
-(defn show-plane [plane]
-  [:table.plane (map-indexed show-row plane)])
+;after you spend a day golfing the interface to consist of three simple functions, you need a
+;tracer to actually understand what you've written,  and why it breaks so bad
+
+;(trace/trace-forms {:tracer trace/default-tracer}
+(defn show-cell [cell coords nest]
+  [:td {:title (str coords)
+        :on-click #(swap! game assoc-in (cons :board coords) (turn-player!))}
+       cell])
+
+(defn show-row [row coords nest]
+  (cons :tr (nest)))
+
+(defn show-plane [plane coords nest]
+  (cons :table.plane (nest)))
 
 ;(@game :board)
 ;(swap! game assoc-in [:board 0 1] \x)
+
+;(defn logged [x] (.log js/console (clj->js x)) x)
+
+(defn render
+  "Iterate data structure and for each nesting level apply the next function from the
+  fs collection. Functions take three arguments [data coordinates & nest-function], where
+  data is corresponding part of data, coordinates is vector of all keys, with current
+  key being the last, and optional nest function is the one to apply to call to process
+  next level of data. nest-function is optional and is nil for last defined nesting level.
+  Nest function returns a vector of children elements."
+
+  ([data fs] (render data [] fs))
+  ([data coords [f & fs]]
+   ; the magic is the nesting function - iterates the data and applies the first function on
+   ; each element
+   (let [nest (defn nest [data coords [f & fs]]
+                (let [iter-fn (cond (map? data)     map
+                                    (seqable? data) map-indexed
+                                    :else           (fn [f data] (f nil data)))
+                      render-fn (fn [key d]
+                                  (let [new-coords (if (nil? key) coords (conj coords key))]
+                                    (vec (f d new-coords #(nest d new-coords fs)))))]
+                  (iter-fn render-fn data)))]
+   ; we convert the result into vector, as that's what reagent expects
+   (vec (f data coords #(nest data coords fs))))))
+;) ;trace-forms
+;(render 1 [0 0] [show-cell])
+;(render [1 2 3 4] [0] [show-row show-cell])
+;(render (@game :board) [show-plane show-row show-cell])
 
 ;; -------------------------
 ;; Views
 
 (defn home-page []
   [:div [:h2 "Tic Tac Toe 3D"]
-   (show-plane (@game :board))])
+   (render (@game :board) [show-plane show-row show-cell])])
 
 (defn about-page []
   [:div [:h2 "About ttoe-3d"]
