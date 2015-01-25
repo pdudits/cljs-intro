@@ -19,9 +19,9 @@
 ;(-> \space vec4 vec4 vec4)
 ;((comp vec4 vec4 vec4) \space)
 
-(def board ((apply comp (replicate DIMENSIONS vec4)) \space))
+(defn new-board [] ((apply comp (replicate DIMENSIONS vec4)) \space))
 
-(def game (atom {:board board :player \o}))
+(def game (atom {:board (new-board) :player \o :score {\x 0 \o 0}}))
 
 (defn turn-player! [] (:player (swap! game update-in [:player] #(if (= % \x) \o \x))))
 (defn next-player [player] (if (= player \x) \o \x))
@@ -29,11 +29,18 @@
 
 ;after you spend a day golfing the interface to consist of three simple functions, you need a
 ;tracer to actually understand what you've written,  and why it breaks so bad
+(defn compute-score [board coord player] 0)
 
 (defn move [game coord player]
   (if (= \space (get-in game (cons :board coord)))
-    {:board (assoc-in (:board game) coord player)
-     :player (next-player player)}))
+    (let [new-board (assoc-in (:board game) coord player)
+          new-player (next-player player)
+          game-over? (not-any? #(= \space %) (flatten new-board))
+          score (compute-score new-board coord player)]
+    {:board new-board
+     :player new-player
+     :score (update (game :score) player + score)
+     :game-over game-over?})))
 
 ;(trace/trace-forms {:tracer trace/default-tracer}
 (defn show-cell [cell coords nest]
@@ -47,6 +54,7 @@
 (defn show-plane [plane coords nest]
   (cons :table.plane (nest)))
 
+(merge {:a 1} {:a nil})
 ;(@game :board)
 ;(swap! game assoc-in [:board 0 1] \x)
 
@@ -79,16 +87,27 @@
 ;(render [1 2 3 4] [0] [show-row show-cell])
 ;(render (@game :board) [show-plane show-row show-cell])
 
+(defn show-score [score]
+  [:h4 (cons "Score: " (map #(str (first %) ": " (second %) " ") score))])
+
 ;; -------------------------
 ;; Views
-
 (defn home-page []
-  [:div [:h2 "Tic Tac Toe 3D"]
-   (render (@game :board) [show-plane show-row show-cell])])
+  (if (@game :game-over)
+    (navigate! "/game-over")
+    [:div [:h2 "Tic Tac Toe 3D"]
+     (show-score (@game :score))
+     (render (@game :board) [show-plane show-row show-cell])]))
 
 (defn about-page []
   [:div [:h2 "About ttoe-3d"]
    [:div [:a {:href "#/"} "go to the home page"]]])
+
+(defn game-over []
+  [:div [:h1 "Game Over"] (show-score (@game :score)) [:a {:href "#/"
+                                                           :on-click #(do (swap! game assoc :board (new-board))
+                                                                        true)}
+                                   "New game"]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])
@@ -100,19 +119,25 @@
 (secretary/defroute "/" []
   (session/put! :current-page #'home-page))
 
+(secretary/defroute "/game-over" []
+  (session/put! :current-page game-over))
+
 (secretary/defroute "/about" []
   (session/put! :current-page #'about-page))
 
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-     EventType/NAVIGATE
-     (fn [event]
-       (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+(let [h (History.)]
+  (defn  hook-browser-navigation! []
+    (doto h
+      (events/listen
+        EventType/NAVIGATE
+        (fn [event]
+         (secretary/dispatch! (.-token event))))
+      (.setEnabled true)))
+  (defn navigate! [page]
+    (.setToken h page)))
 
 ;; -------------------------
 ;; Initialize app
