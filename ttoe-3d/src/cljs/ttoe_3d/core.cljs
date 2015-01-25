@@ -93,11 +93,9 @@
 ;; -------------------------
 ;; Views
 (defn home-page []
-  (if (@game :game-over)
-    (navigate! "/game-over")
     [:div [:h2 "Tic Tac Toe 3D"]
      (show-score (@game :score))
-     (render (@game :board) [show-plane show-row show-cell])]))
+     (render (@game :board) [show-plane show-row show-cell])])
 
 (defn about-page []
   [:div [:h2 "About ttoe-3d"]
@@ -105,12 +103,16 @@
 
 (defn game-over []
   [:div [:h1 "Game Over"] (show-score (@game :score)) [:a {:href "#/"
-                                                           :on-click #(do (swap! game assoc :board (new-board))
+                                                           :on-click #(do (swap! game assoc
+                                                                                 :board (new-board)
+                                                                                 :game-over false)
                                                                         true)}
                                    "New game"]])
 
 (defn current-page []
-  [:div [(session/get :current-page)]])
+ (if (@game :game-over)
+   (do (navigate! "/game-over") [:div [game-over]])
+   [:div [(session/get :current-page)]]))
 
 ;; -------------------------
 ;; Routes
