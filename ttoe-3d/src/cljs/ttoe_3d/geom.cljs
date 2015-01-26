@@ -6,9 +6,9 @@
 (defn vec- [vctr1 vctr2] (map - vctr1 vctr2))
 (defn line-point [start dir distance] (vec+ start (scalar* dir distance)))
 
-(defn valid-line? [source dir]
-  "Vector (source + 3*dir) is between [0] and [3]"
-  (every? #(and (>= % 0) (< % 4)) (line-point source dir 3)))
+(defn valid-line? [source dir bound]
+  "Vector (source + bound*dir) is between [0] and [bound]"
+  (every? #(<= 0 % (dec bound)) (line-point source dir (dec bound))))
 
 (defn codirectional? [v1 v2]
   ;; vectors are codirectional if
@@ -42,7 +42,7 @@
 
 (defn diagonals "Return all diagonal direction in n dimensions"
   [n] {:pre (> 1 n)}
-  (let [directions [-1 0 1]] ;thread last
+  (let [directions [1 0 -1]] ;thread last
     (->> (coll-exp directions n) ;all possible diagonals
         (filter (fn [v] (not-every? #(= % 0) v))) ;without zero vector
         (reduce (fn [ind v] (if (some #(codirectional? % v) ind)
@@ -50,4 +50,21 @@
                               (conj ind v))) ; add any linearly independent direction
                 #{})))) ; a set
 
-; be very careful if you really defined a function or you just think so and forgot #()
+; be very careful if you really defined a anonymous function or you just think so and forgot #()
+
+(defn diagonals-over "All diagonal lines crossing the coordinate" [point bound]
+  (let [in-bounds? (fn [v] (every? #(< -1 % bound) v))]
+    (for [dir (diagonals (count point))
+          t (range 0 bound)
+          :let [start (line-point point dir (- t))
+                end (line-point point dir (- bound 1 t))]
+          :when (every? in-bounds? (list start end))]
+            [(vec start) dir])))
+
+;(diagonals-over [2 2] 5)
+;(diagonals-over [0 0 0] 4)
+;(every? (fn [v] (every? #(< -1 % 4) v)) (list '(0 0) '(3 3)))
+
+
+
+

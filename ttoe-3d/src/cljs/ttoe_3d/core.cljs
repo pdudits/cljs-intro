@@ -4,6 +4,7 @@
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [clairvoyant.core :as trace :include-macros true]
+              [ttoe-3d.geom :as g]
               [goog.history.EventType :as EventType])
     (:import goog.History))
 
@@ -29,7 +30,15 @@
 
 ;after you spend a day golfing the interface to consist of three simple functions, you need a
 ;tracer to actually understand what you've written,  and why it breaks so bad
-(defn compute-score [board coord player] 0)
+(defn compute-score [board coord player]
+;  (for [[start dir] (g/diagonals-over coord SIZE)
+;        t (range 0 SIZE)])
+   (count (filter (fn [[start dir]]
+                    (every? #(= player (get-in board (g/line-point start dir %))) (range 0 SIZE)))
+                  (g/diagonals-over coord SIZE))))
+
+
+
 
 (defn move [game coord player]
   (if (= \space (get-in game (cons :board coord)))
