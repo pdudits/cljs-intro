@@ -37,9 +37,6 @@
                     (every? #(= player (get-in board (g/line-point start dir %))) (range 0 SIZE)))
                   (g/diagonals-over coord SIZE))))
 
-
-
-
 (defn move [game coord player]
   (if (= \space (get-in game (cons :board coord)))
     (let [new-board (assoc-in (:board game) coord player)
@@ -62,6 +59,12 @@
 
 (defn show-plane [plane coords nest]
   (cons :table.plane (nest)))
+
+(defn show-cube [cube coords nest]
+  (cons :div.cube (nest)))
+
+(defn show-hypercube [hc coords nest]
+  (cons :div.hypercube (nest)))
 
 (merge {:a 1} {:a nil})
 ;(@game :board)
@@ -104,7 +107,11 @@
 (defn home-page []
     [:div [:h2 "Tic Tac Toe 3D"]
      (show-score (@game :score))
-     (render (@game :board) [show-plane show-row show-cell])])
+     (let [depth (loop [[f & r] (@game :board) d 1]
+                   (if (seqable? f) (recur f (inc d)) d))
+           all-renderers [show-hypercube show-cube show-plane show-row show-cell]
+           renderers (take-last (inc depth) all-renderers)]
+       (render (@game :board) renderers))])
 
 (defn about-page []
   [:div [:h2 "About ttoe-3d"]
