@@ -12,7 +12,7 @@
 ;[\space \space \space \space]
 (def SIZE 4)
 (defn vecS [x] (vec (replicate SIZE x)))
-(def DIMENSIONS 2)
+(def DIMENSIONS 3)
 
 ;(vec4 \space)
 ;(vec4 (vec4 \space))
