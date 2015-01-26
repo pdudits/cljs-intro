@@ -9,8 +9,8 @@
 
 ; one row would be:
 ;[\space \space \space \space]
-
-(defn vec4 [x] (vec (replicate 4 x)))
+(def SIZE 4)
+(defn vecS [x] (vec (replicate SIZE x)))
 (def DIMENSIONS 2)
 
 ;(vec4 \space)
@@ -19,7 +19,7 @@
 ;(-> \space vec4 vec4 vec4)
 ;((comp vec4 vec4 vec4) \space)
 
-(defn new-board [] ((apply comp (replicate DIMENSIONS vec4)) \space))
+(defn new-board [] ((apply comp (replicate DIMENSIONS vecS)) \space))
 
 (def game (atom {:board (new-board) :player \o :score {\x 0 \o 0}}))
 
