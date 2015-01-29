@@ -25,10 +25,10 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :current-page home-page))
+  (session/put! :current-page #'home-page))
 
 (secretary/defroute "/about" []
-  (session/put! :current-page about-page))
+  (session/put! :current-page #'about-page))
 
 ;; -------------------------
 ;; History
@@ -44,7 +44,5 @@
 ;; -------------------------
 ;; Initialize app
 (defn init! []
+  (hook-browser-navigation!)
   (reagent/render-component [current-page] (.getElementById js/document "app")))
-
-;; need to run this after routes have been defined
-(hook-browser-navigation!)
