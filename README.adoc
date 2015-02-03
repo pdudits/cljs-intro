@@ -2,3 +2,5 @@
 
   bundler install --path vendor
   bundler exec guard
+
+Go to http://localhost:35729/presentation.html
