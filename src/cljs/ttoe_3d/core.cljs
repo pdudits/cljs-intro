@@ -26,9 +26,10 @@
 (session/put! :dimensions 2)
 
 (defn reset-board! []
-  (swap! game
-         assoc :board
-               (make-board (session/get :dimensions) (session/get :size))))
+  (reset! game
+        {:board (make-board (session/get :dimensions) (session/get :size))
+         :player \x
+         :score {\x 0 \o 0}}))
 
 (defn set-size! [s] (session/put! :size s) (reset-board!))
 
