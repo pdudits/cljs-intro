@@ -6,11 +6,23 @@
               [goog.history.EventType :as EventType])
     (:import goog.History))
 
+(defn vec-n [n x] (vec (repeat n x)))
+
+; this is bit too high order for starter
+;(defn make-board [dimensions size] ((apply comp (repeat dimensions (partial vec-n size))) \space))
+
+; recursive version
+(defn make-board [dimensions size]
+  (if (= 1 dimensions) (vec-n size \space)
+                       (vec-n size (make-board (dec dimensions) size))))
+; (make-board 2 3)
+
+
 ;; -------------------------
 ;; Views
 
-(defn home-page []
-  [:div [:h2 "Welcome to ttoe-3d"]
+(defn tic-tac-toe-page []
+  [:div [:h2 "Clojurescript Tic-Tac-Toe"]
    [:div [:a {:href "#/about"} "go to about page"]]])
 
 (defn about-page []
@@ -25,7 +37,7 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :current-page #'home-page))
+  (session/put! :current-page #'tic-tac-toe-page))
 
 (secretary/defroute "/about" []
   (session/put! :current-page #'about-page))
