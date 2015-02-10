@@ -47,3 +47,14 @@ table.plane td {
 table.plane td:hover {
   background-color: lightgray;
 }
+
+
+div.cube table.plane {
+  transform: skew(-30deg, 0) scale(1, 0.6);
+  margin-bottom: -2em;
+}
+
+div.hypercube div.cube {
+  width: 25%;
+  float: left;
+}

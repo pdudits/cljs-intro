@@ -45,7 +45,6 @@
             (g/diagonals-over coord (count board)))))
 
 
-
 (defn move! [coord]
   (let [cell (get-in @game coord)
         player (swap-player!)
@@ -73,8 +72,24 @@
 (defn render-plane [coord plane]
   [:table.plane (nest render-row coord plane)])
 
+(defn render-cube [coord cube]
+  [:div.cube (nest render-plane coord cube)])
+
+(defn render-hypercube [coord hc]
+  [:div.hypercube (nest render-cube coord hc)])
+
+(defn depth [b]
+  (loop [[f & r] b d 0]
+    (if (seqable? f) (recur f (inc d)) d)))
+
+;(depth [[1 2][1 2]])
+
 (defn render-board [key game]
-  [render-plane [key] (game key)])
+  (let [dimensions [render-row render-plane render-cube render-hypercube]
+        board (game key)
+        depth (depth board)
+        renderer (nth dimensions depth)]
+  [renderer [key] board]))
 
 (defn render-score [scores]
   [:table.score [:tr [:td {:rowSpan 2} "Score"]
