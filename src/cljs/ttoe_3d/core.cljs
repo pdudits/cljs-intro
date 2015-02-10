@@ -45,9 +45,11 @@
         board-coord (drop 1 coord)]
     (if (= \space cell)
         (let [new-game (swap! game assoc-in coord player)
-              score (compute-score (new-game board-key) board-coord)
-              new-game (swap! game update-in [:score player] inc score)]
-          new-game))))
+              new-board (new-game board-key)
+              score (compute-score new-board board-coord)
+              new-game (swap! game update-in [:score player] + score)
+              game-over? (not-any? #(= \space %) (flatten new-board))]
+          (if game-over? (navigate! "/game-over"))))))
 
 ;; The components
 (defn nest [f coord data]
@@ -90,6 +92,11 @@
     [:tr [:td [:label "Dimensions"]] [:td [:select [:option {:value 2} "2"]]]]]
    [:div [:a {:href "#/"} "go to the home page"]]])
 
+(defn game-over-page []
+  [:div [:h1 "Game Over"]
+   [render-score (@game :score)]
+   [:a {:href "#/" :on-click #(do (reset-board!) true)} "New game"]])
+
 (defn current-page []
   [:div [(session/get :current-page)]])
 
@@ -103,16 +110,21 @@
 (secretary/defroute "/settings" []
   (session/put! :current-page #'settings-page))
 
+(secretary/defroute "/game-over" []
+  (session/put! :current-page #'game-over-page))
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-     EventType/NAVIGATE
-     (fn [event]
-       (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+(let [h (History.)]
+  (defn  hook-browser-navigation! []
+    (doto h
+      (events/listen
+        EventType/NAVIGATE
+        (fn [event]
+         (secretary/dispatch! (.-token event))))
+      (.setEnabled true)))
+  (defn navigate! [page]
+    (.setToken h page)))
 
 ;; -------------------------
 ;; Initialize app
