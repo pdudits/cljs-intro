@@ -17,12 +17,26 @@
                        (vec-n size (make-board (dec dimensions) size))))
 ; (make-board 2 3)
 
+;; Our global state
+(def settings (atom {:dimensions 2 :size 4}))
+(def game (atom {:board (make-board 2 4)}))
+
+;; The components
+(defn render-cell [cell]
+  [:td cell])
+
+(defn render-row [row]
+  [:tr (map render-cell row)])
+
+(defn render-board [key game]
+  [:table.plane (map render-row (game key))])
 
 ;; -------------------------
 ;; Views
 
 (defn tic-tac-toe-page []
   [:div [:h2 "Clojurescript Tic-Tac-Toe"]
+   [render-board :board @game]
    [:div [:a {:href "#/about"} "go to about page"]]])
 
 (defn about-page []
