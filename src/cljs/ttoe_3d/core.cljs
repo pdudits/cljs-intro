@@ -65,11 +65,16 @@
 (defn render-board [key game]
   [render-plane [key] (game key)])
 
+(defn render-score [scores]
+  [:table.score [:tr [:td {:rowSpan 2} "Score"]
+                     (map #(vector :th %) (keys scores))]
+                [:tr (map #(vector :td %) (vals scores))]])
 ;; -------------------------
 ;; Views
 
 (defn tic-tac-toe-page []
   [:div [:h2 "Clojurescript Tic-Tac-Toe"]
+   [render-score (:score @game)]
    [render-board :board @game]
    [:div [:a {:href "#/settings"} "settings"]]])
 
