@@ -32,7 +32,14 @@
 
 (defn set-size! [s] (session/put! :size s) (reset-board!))
 
-(defn move! [coord] (swap! game assoc-in coord \x))
+(defn swap-player! [] (-> (swap! game update-in [:player] #(if (= % \x) \o \x)) :player))
+
+;(swap-player!)
+
+(defn move! [coord]
+  (let [cell (get-in @game coord)]
+    (if (= \space cell)
+       (swap! game assoc-in coord (swap-player!)))))
 
 ;; The components
 (defn nest [f coord data]
