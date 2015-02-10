@@ -33,14 +33,17 @@
 (defn set-size! [s] (session/put! :size s) (reset-board!))
 
 ;; The components
+(defn nest [f coord data]
+  (map-indexed #(f (conj coord %1) %2) data))
+
 (defn render-cell [coord cell]
   [:td {:title coord} cell])
 
 (defn render-row [coord row]
-  [:tr (map-indexed #(render-cell (conj coord %1) %2) row)])
+  [:tr (nest render-cell coord row)])
 
 (defn render-plane [coord plane]
-  [:table.plane (map-indexed #(render-row (conj coord %1) %2) plane)])
+  [:table.plane (nest render-row coord plane)])
 
 (defn render-board [key game]
   [render-plane [key] (game key)])
