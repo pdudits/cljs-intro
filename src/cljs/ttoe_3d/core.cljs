@@ -20,7 +20,7 @@
 ; (swap! game assoc-in [:board 0 1] \o)
 
 ;; Our global state
-(def game (atom {:board (make-board 2 4)}))
+(def game (atom {:board (make-board 2 4) :player \x :score {\x 0 \o 0}}))
 
 (session/put! :size 4)
 (session/put! :dimensions 2)
@@ -35,11 +35,18 @@
 (defn swap-player! [] (-> (swap! game update-in [:player] #(if (= % \x) \o \x)) :player))
 
 ;(swap-player!)
+(defn compute-score [board coord] 0)
 
 (defn move! [coord]
-  (let [cell (get-in @game coord)]
+  (let [cell (get-in @game coord)
+        player (swap-player!)
+        board-key (first coord)
+        board-coord (drop 1 coord)]
     (if (= \space cell)
-       (swap! game assoc-in coord (swap-player!)))))
+        (let [new-game (swap! game assoc-in coord player)
+              score (compute-score (new-game board-key) board-coord)
+              new-game (swap! game update-in [:score player] inc score)]
+          new-game))))
 
 ;; The components
 (defn nest [f coord data]
