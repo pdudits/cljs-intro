@@ -16,6 +16,8 @@
   (if (= 1 dimensions) (vec-n size \space)
                        (vec-n size (make-board (dec dimensions) size))))
 ; (make-board 2 3)
+; (swap! game assoc-in [:board 0 0] \x)
+; (swap! game assoc-in [:board 0 1] \o)
 
 ;; Our global state
 (def game (atom {:board (make-board 2 4)}))
