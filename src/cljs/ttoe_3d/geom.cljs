@@ -55,3 +55,16 @@
                 #{})))) ; a set
 
 ; be very careful if you really defined a function or you just think so and forgot #()
+
+(defn diagonals-over "All diagonal lines crossing the coordinate" [point bound]
+  (let [in-bounds? (fn [v] (every? #(< -1 % bound) v))]
+    (for [dir (diagonals (count point))
+          t (range 0 bound)
+          :let [start (line-point point dir (- t))
+                end (line-point point dir (- bound 1 t))]
+          :when (every? in-bounds? (list start end))]
+            [(vec start) dir])))
+
+;(diagonals-over [2 2] 5)
+;(diagonals-over [0 0 0] 4)
+;(every? (fn [v] (every? #(< -1 % 4) v)) (list '(0 0) '(3 3)))

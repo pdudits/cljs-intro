@@ -1,6 +1,7 @@
 (ns ttoe-3d.core
     (:require [reagent.core :as reagent :refer [atom]]
               [reagent.session :as session]
+              [ttoe-3d.geom :as g]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [goog.history.EventType :as EventType])
@@ -36,7 +37,14 @@
 (defn swap-player! [] (-> (swap! game update-in [:player] #(if (= % \x) \o \x)) :player))
 
 ;(swap-player!)
-(defn compute-score [board coord] 0)
+(defn compute-score [board coord player]
+  (count
+    (filter (fn [[start dir]]
+              (every? #(= player (get-in board (g/line-point start dir %)))
+                       (range 0 (count board))))
+            (g/diagonals-over coord (count board)))))
+
+
 
 (defn move! [coord]
   (let [cell (get-in @game coord)
@@ -45,8 +53,8 @@
         board-coord (drop 1 coord)]
     (if (= \space cell)
         (let [new-game (swap! game assoc-in coord player)
-              new-board (new-game board-key)
-              score (compute-score new-board board-coord)
+              new-board (get new-game board-key)
+              score (compute-score new-board board-coord player)
               new-game (swap! game update-in [:score player] + score)
               game-over? (not-any? #(= \space %) (flatten new-board))]
           (if game-over? (navigate! "/game-over"))))))
