@@ -21,7 +21,7 @@
 ; (swap! game assoc-in [:board 0 1] \o)
 
 ;; Our global state
-(def game (atom {:board (make-board 2 4) :player \x :score {\x 0 \o 0}}))
+(def game (atom {}))
 
 (session/put! :size 4)
 (session/put! :dimensions 2)
@@ -32,7 +32,10 @@
          :player \x
          :score {\x 0 \o 0}}))
 
+(reset-board!)
+
 (defn set-size! [s] (session/put! :size s) (reset-board!))
+(defn set-dimensions! [d] (session/put! :dimensions d) (reset-board!))
 
 (defn swap-player! [] (-> (swap! game update-in [:player] #(if (= % \x) \o \x)) :player))
 
@@ -104,15 +107,20 @@
    [render-board :board @game]
    [:div [:a {:href "#/settings"} "settings"]]])
 
+(defn select [change-handler curr-value values]
+  [:select {:on-change #(change-handler (-> % .-target .-value))
+            :value curr-value} ;react specific prop
+           (map #(vector :option {:value %} %)
+                values)])
+
 (defn settings-page []
   [:div [:h2 "Settings"]
    [:table
     [:tr [:td [:label "Size "]]
-         [:td [:select {:on-change #(set-size! (-> % .-target .-value))
-                        :value (session/get :size)} ;react specific prop
-                        (map #(vector :option {:value %} %)
-                                              (range 3 6))]]]
-    [:tr [:td [:label "Dimensions"]] [:td [:select [:option {:value 2} "2"]]]]]
+         [:td [select set-size! (session/get :size) (range 3 6)]]]
+    [:tr [:td [:label "Dimensions"]]
+         [:td [select set-dimensions! (session/get :dimensions)
+               (range 2 5)]]]]
    [:div [:a {:href "#/"} "go to the home page"]]])
 
 (defn game-over-page []
