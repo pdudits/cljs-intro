@@ -32,12 +32,15 @@
 
 (defn set-size! [s] (session/put! :size s) (reset-board!))
 
+(defn move! [coord] (swap! game assoc-in coord \x))
+
 ;; The components
 (defn nest [f coord data]
   (map-indexed #(f (conj coord %1) %2) data))
 
 (defn render-cell [coord cell]
-  [:td {:title coord} cell])
+  [:td {:title coord
+        :on-click #(move! coord)} cell])
 
 (defn render-row [coord row]
   [:tr (nest render-cell coord row)])
