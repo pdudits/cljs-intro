@@ -23,7 +23,7 @@ Patrik Duditš, @pdudits
 == LightTable
 * http://lighttable.com[An IDE with live evaluation]
 * Completely written in ClojureScript on top of node-webkit
-* Very successfully crowdfunded ($300k for Clojure/Javascript IDE)
+* Crowdfunded (remarkably successful tech kickstarter project)
 
 == But, the parens!
 
@@ -42,6 +42,60 @@ Patrik Duditš, @pdudits
 * Maps ``{:key "value"}``
 * Destructuring constructs
 * More to come in live-coding
+
+== Crash course
+
+[source, clojure]
+----
+; call function map with inline function (lambda) and a vector
+(map (fn [n] (* n 2)) [1 2 3 4 5]) ;=> [2 4 6 8 10]
+; shorthand
+(map #(* % 2) [1 2 3 4 5]) ;=> [2 4 6 8 10]
+; define a function
+(defn times-2 [x] (map #(* % 2) x)) ;=>user/times-2
+; define overloaded function
+(defn times-2
+  "Multiply a collection by 2. If not supplied use predefined one"
+  [] (times-2 [1 2 3 4 5])
+  [x] (map #(* % 2) x)) ;=> user/times-2
+----
+
+== Vectors and Maps
+[source, clojure]
+----
+(def vector [1 2 3 4 5]) ; => [1 2 3 4 5]
+(count vector) ;=> 5
+(conj vector 6) ; conjoin => [1 2 3 4 5 6]
+(assoc vector 3 8) ;=> [1 2 3 8 5]
+(nth vector 1) ; => 2
+(get vector 5 :none) ; => :none
+(vector 3) ; => 4
+
+(def a-map {:foo "bar" :doo "var"}) ;=> {:foo "bar" :doo "var"}
+(count a-map) ;=> 2
+(assoc a-map :bar "baz") ;=> {:foo "bar" :doo "var" :bar "baz"}
+(get a-map :aaa :none) ;=> :none
+(a-map :foo) ;=> "bar"
+(:doo a-map) ;=> "var"
+----
+
+== Deep maps
+[source, clojure]
+----
+(def a-nested-map {:customer-id 1e6
+                   :preferences {:nickname "Bob"
+                                 :avatar "/userimage/0/0.jpg"}
+                   :services {:alerts {:daily true}}})
+
+(get-in a-nested-map [:preferences :nickname]) ;=> "Bob"
+
+; update by applying a function on the nested keys
+(def other-map (update-in a-nested-map [:services :alerts] not))
+(get-in a-nested-map [:services :alerts]) ;=> false
+
+(:customer-id (assoc-in a-nested-map [:customer-id] 1039) ; => 1039
+----
+
 
 == Clojure Build infrastructure
 
@@ -78,15 +132,16 @@ Java is to JavaScript what ham is to hamster
 
 * Scala.js
 * Opal.js (Ruby)
-* PureScript (Haskell)
+* Elm (Haskell)
 
 == So why Clojure to JS?
-
 [.fragment]
-core.async
-
+full-stack development
 [.fragment]
-Implementation of Communicating Sequential Processes (a. k. a. continuations)
+*core.async*
+
+[.fragment.small]
+Implementation of Communicating Sequential Processes
 
 == If node existed in '95
 
@@ -97,7 +152,7 @@ image::node95.png[]
 [source, clojure]
 ----
 (ns demo
-    (require [core.async :refer [go <!]]
+    (require [core.async :refer [go <!] :include-macros true]
              [floppy :refer [<load <prompt]]))
 
 (go (let [data1 (<! (<load "disk1"))
