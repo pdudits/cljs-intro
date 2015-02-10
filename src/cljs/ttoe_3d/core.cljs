@@ -18,8 +18,17 @@
 ; (make-board 2 3)
 
 ;; Our global state
-(def settings (atom {:dimensions 2 :size 4}))
 (def game (atom {:board (make-board 2 4)}))
+
+(session/put! :size 4)
+(session/put! :dimensions 2)
+
+(defn reset-board! []
+  (swap! game
+         assoc :board
+               (make-board (session/get :dimensions) (session/get :size))))
+
+(defn set-size! [s] (session/put! :size s) (reset-board!))
 
 ;; The components
 (defn render-cell [cell]
@@ -37,10 +46,17 @@
 (defn tic-tac-toe-page []
   [:div [:h2 "Clojurescript Tic-Tac-Toe"]
    [render-board :board @game]
-   [:div [:a {:href "#/about"} "go to about page"]]])
+   [:div [:a {:href "#/settings"} "settings"]]])
 
-(defn about-page []
-  [:div [:h2 "About ttoe-3d"]
+(defn settings-page []
+  [:div [:h2 "Settings"]
+   [:table
+    [:tr [:td [:label "Size "]]
+         [:td [:select {:on-change #(set-size! (-> % .-target .-value))
+                        :value (session/get :size)} ;react specific prop
+                        (map #(vector :option {:value %} %)
+                                              (range 3 6))]]]
+    [:tr [:td [:label "Dimensions"]] [:td [:select [:option {:value 2} "2"]]]]]
    [:div [:a {:href "#/"} "go to the home page"]]])
 
 (defn current-page []
@@ -53,8 +69,8 @@
 (secretary/defroute "/" []
   (session/put! :current-page #'tic-tac-toe-page))
 
-(secretary/defroute "/about" []
-  (session/put! :current-page #'about-page))
+(secretary/defroute "/settings" []
+  (session/put! :current-page #'settings-page))
 
 ;; -------------------------
 ;; History
