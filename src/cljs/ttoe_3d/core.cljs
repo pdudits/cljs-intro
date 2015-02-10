@@ -33,14 +33,17 @@
 (defn set-size! [s] (session/put! :size s) (reset-board!))
 
 ;; The components
-(defn render-cell [cell]
-  [:td cell])
+(defn render-cell [coord cell]
+  [:td {:title coord} cell])
 
-(defn render-row [row]
-  [:tr (map render-cell row)])
+(defn render-row [coord row]
+  [:tr (map-indexed #(render-cell (conj coord %1) %2) row)])
+
+(defn render-plane [coord plane]
+  [:table.plane (map-indexed #(render-row (conj coord %1) %2) plane)])
 
 (defn render-board [key game]
-  [:table.plane (map render-row (game key))])
+  [render-plane [key] (game key)])
 
 ;; -------------------------
 ;; Views
