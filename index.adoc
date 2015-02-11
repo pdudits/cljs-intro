@@ -1,0 +1,10 @@
+= ClojureScript Tic-Tac-Toe
+Patrik Duditš
+
+
+Talk on ClojuresScript given at http://www.meetup.com/eastcode-sessions/[
+EastCode sessions meetup]. Feel free to submit pull requests, or discuss the code
+in the commit history.
+
+* link:presentation.html[Presentation]
+* https://github.com/pdudits/cljs-intro[Source code]
