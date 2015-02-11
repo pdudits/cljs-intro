@@ -63,13 +63,13 @@ Patrik Duditš, @pdudits
 == Vectors and Maps
 [source, clojure]
 ----
-(def vector [1 2 3 4 5]) ; => [1 2 3 4 5]
-(count vector) ;=> 5
-(conj vector 6) ; conjoin => [1 2 3 4 5 6]
-(assoc vector 3 8) ;=> [1 2 3 8 5]
-(nth vector 1) ; => 2
-(get vector 5 :none) ; => :none
-(vector 3) ; => 4
+(def a-vector [1 2 3 4 5]) ; => [1 2 3 4 5]
+(count a-vector) ;=> 5
+(conj a-vector 6) ; conjoin => [1 2 3 4 5 6]
+(assoc a-vector 3 8) ;=> [1 2 3 8 5]
+(nth a-vector 1) ; => 2
+(get a-vector 5 :none) ; => :none
+(a-vector 3) ; => 4
 
 (def a-map {:foo "bar" :doo "var"}) ;=> {:foo "bar" :doo "var"}
 (count a-map) ;=> 2
@@ -90,10 +90,12 @@ Patrik Duditš, @pdudits
 (get-in a-nested-map [:preferences :nickname]) ;=> "Bob"
 
 ; update by applying a function on the nested keys
-(def other-map (update-in a-nested-map [:services :alerts] not))
-(get-in a-nested-map [:services :alerts]) ;=> false
+(def other-map (update-in a-nested-map               ; the map
+                          [:services :alerts :daily] ; sequence of the keys
+                          not))   ; function to be applied to current value
+(get-in other-map [:services :alerts :daily]) ;=> false
 
-(:customer-id (assoc-in a-nested-map [:customer-id] 1039) ; => 1039
+(:customer-id (assoc-in a-nested-map [:customer-id] 1039)) ; => 1039
 ----
 
 
@@ -116,9 +118,6 @@ Clojure to Javascript compiler
 == Pronounciation test
 
 Compiling Clo__**j**__ure with Google Clo__**s**__ure compiler and utilizing both Clo__**j**__ure standard library and Google Clo__**s**__ure library.
-
-[quote.fragment]
-Java is to JavaScript what ham is to hamster
 
 == Everybody loves to transpile!
 
