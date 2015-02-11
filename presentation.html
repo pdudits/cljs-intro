@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="author" content="Patrik Duditš, @pdudits"><title>Clojurescript Tic-Tac-Toe</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="reveal.js/css/reveal.min.css" rel="stylesheet"><link rel="stylesheet" href="reveal.js/css/theme/default.css" id="theme"><link rel="stylesheet" href="./asciidoctor-coderay.css"><link href="reveal.js/lib/css/zenburn.css" rel="stylesheet"><script type="text/javascript">document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script></head><body><div class="reveal"><div class="slides"><section><h2>Clojurescript Tic-Tac-Toe</h2><p><small>Patrik Duditš, @pdudits</small></p></section><section id="_me_and_lisp"><h2>Me and LISP</h2><div class="ulist"><ul><li><p>Java EE architect</p></li><li><p>Therefore just theory:</p><div class="ulist"><ul><li><p><a href="http://mitpress.mit.edu/sicp/">Strucure and Interpretation of Computer Programs</a></p></li><li><p><a href="http://www.paulgraham.com/onlisp.html">On LISP</a></p></li><li><p>Joy of Clojure</p></li></ul></div></li></ul></div></section>
+<section id="_lighttable"><h2>LightTable</h2><div class="ulist"><ul><li><p><a href="http://lighttable.com">An IDE with live evaluation</a></p></li><li><p>Completely written in ClojureScript on top of node-webkit</p></li><li><p>Crowdfunded (remarkably successful tech kickstarter project)</p></li></ul></div></section>
+<section id="_but_the_parens"><h2>But, the parens!</h2></section>
+<section id="__1_2"><h2>(1 + 2)</h2></section>
+<section id="__1_2_2"><h2>(+ 1 2)</h2></section>
+<section id="_system_exit_0"><h2>System.exit(0)</h2></section>
+<section id="__system_exit_0"><h2>(System/exit 0)</h2></section>
+<section id="_there_s_more_syntax_in_clojure"><h2>There&#8217;s more syntax in Clojure</h2><div class="ulist"><ul><li><p>Lists <code>'(1 2 3)</code></p></li><li><p>Vectors <code>[1 2 3]</code></p></li><li><p>Maps <code>{:key "value"}</code></p></li><li><p>Destructuring constructs</p></li><li><p>More to come in live-coding</p></li></ul></div></section>
+<section id="_crash_course"><h2>Crash course</h2><div class="listingblock"><div class="content"><pre class="CodeRay"><code class="clojure language-clojure"><span class="comment">; call function map with inline function (lambda) and a vector</span>
+(<span class="keyword">map</span> (<span class="keyword">fn</span> [n] (<span class="keyword">*</span> n <span class="integer">2</span>)) [<span class="integer">1</span> <span class="integer">2</span> <span class="integer">3</span> <span class="integer">4</span> <span class="integer">5</span>]) <span class="comment">;=&gt; [2 4 6 8 10]</span>
+<span class="comment">; shorthand</span>
+(<span class="keyword">map</span> #(<span class="keyword">*</span> % <span class="integer">2</span>) [<span class="integer">1</span> <span class="integer">2</span> <span class="integer">3</span> <span class="integer">4</span> <span class="integer">5</span>]) <span class="comment">;=&gt; [2 4 6 8 10]</span>
+<span class="comment">; define a function</span>
+(<span class="keyword">defn</span> <span class="function">times-2</span> [x] (<span class="keyword">map</span> #(<span class="keyword">*</span> % <span class="integer">2</span>) x)) <span class="comment">;=&gt;user/times-2</span>
+<span class="comment">; define overloaded function</span>
+(<span class="keyword">defn</span> <span class="function">times-2</span>
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">Multiply a collection by 2. If not supplied use predefined one</span><span class="delimiter">&quot;</span></span>
+  [] (times-2 [<span class="integer">1</span> <span class="integer">2</span> <span class="integer">3</span> <span class="integer">4</span> <span class="integer">5</span>])
+  [x] (<span class="keyword">map</span> #(<span class="keyword">*</span> % <span class="integer">2</span>) x)) <span class="comment">;=&gt; user/times-2</span></code></pre></div></div></section>
+<section id="_vectors_and_maps"><h2>Vectors and Maps</h2><div class="listingblock"><div class="content"><pre class="CodeRay"><code class="clojure language-clojure">(<span class="keyword">def</span> <span class="function">a-vector</span> [<span class="integer">1</span> <span class="integer">2</span> <span class="integer">3</span> <span class="integer">4</span> <span class="integer">5</span>]) <span class="comment">; =&gt; [1 2 3 4 5]</span>
+(<span class="keyword">count</span> a-vector) <span class="comment">;=&gt; 5</span>
+(<span class="keyword">conj</span> a-vector <span class="integer">6</span>) <span class="comment">; conjoin =&gt; [1 2 3 4 5 6]</span>
+(<span class="keyword">assoc</span> a-vector <span class="integer">3</span> <span class="integer">8</span>) <span class="comment">;=&gt; [1 2 3 8 5]</span>
+(<span class="keyword">nth</span> a-vector <span class="integer">1</span>) <span class="comment">; =&gt; 2</span>
+(<span class="keyword">get</span> a-vector <span class="integer">5</span> <span class="symbol">:none</span>) <span class="comment">; =&gt; :none</span>
+(a-vector <span class="integer">3</span>) <span class="comment">; =&gt; 4</span>
+
+(<span class="keyword">def</span> <span class="function">a-map</span> {<span class="symbol">:foo</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">bar</span><span class="delimiter">&quot;</span></span> <span class="symbol">:doo</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">var</span><span class="delimiter">&quot;</span></span>}) <span class="comment">;=&gt; {:foo &quot;bar&quot; :doo &quot;var&quot;}</span>
+(<span class="keyword">count</span> a-map) <span class="comment">;=&gt; 2</span>
+(<span class="keyword">assoc</span> a-map <span class="symbol">:bar</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">baz</span><span class="delimiter">&quot;</span></span>) <span class="comment">;=&gt; {:foo &quot;bar&quot; :doo &quot;var&quot; :bar &quot;baz&quot;}</span>
+(<span class="keyword">get</span> a-map <span class="symbol">:aaa</span> <span class="symbol">:none</span>) <span class="comment">;=&gt; :none</span>
+(a-map <span class="symbol">:foo</span>) <span class="comment">;=&gt; &quot;bar&quot;</span>
+(<span class="symbol">:doo</span> a-map) <span class="comment">;=&gt; &quot;var&quot;</span></code></pre></div></div></section>
+<section id="_deep_maps"><h2>Deep maps</h2><div class="listingblock"><div class="content"><pre class="CodeRay"><code class="clojure language-clojure">(<span class="keyword">def</span> <span class="function">a-nested-map</span> {<span class="symbol">:customer-id</span> <span class="float">1e6</span>
+                   <span class="symbol">:preferences</span> {<span class="symbol">:nickname</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Bob</span><span class="delimiter">&quot;</span></span>
+                                 <span class="symbol">:avatar</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/userimage/0/0.jpg</span><span class="delimiter">&quot;</span></span>}
+                   <span class="symbol">:services</span> {<span class="symbol">:alerts</span> {<span class="symbol">:daily</span> <span class="predefined-constant">true</span>}}})
+
+(<span class="keyword">get-in</span> a-nested-map [<span class="symbol">:preferences</span> <span class="symbol">:nickname</span>]) <span class="comment">;=&gt; &quot;Bob&quot;</span>
+
+<span class="comment">; update by applying a function on the nested keys</span>
+(<span class="keyword">def</span> <span class="function">other-map</span> (<span class="keyword">update-in</span> a-nested-map               <span class="comment">; the map</span>
+                          [<span class="symbol">:services</span> <span class="symbol">:alerts</span> <span class="symbol">:daily</span>] <span class="comment">; sequence of the keys</span>
+                          <span class="keyword">not</span>))   <span class="comment">; function to be applied to current value</span>
+(<span class="keyword">get-in</span> other-map [<span class="symbol">:services</span> <span class="symbol">:alerts</span> <span class="symbol">:daily</span>]) <span class="comment">;=&gt; false</span>
+
+(<span class="symbol">:customer-id</span> (<span class="keyword">assoc-in</span> a-nested-map [<span class="symbol">:customer-id</span>] <span class="integer">1039</span>)) <span class="comment">; =&gt; 1039</span></code></pre></div></div></section>
+<section id="_clojure_build_infrastructure"><h2>Clojure Build infrastructure</h2><div class="ulist"><ul><li><p>Used to be lots of Maven</p></li><li><p>clojars.org repo</p></li><li><p><a href="http://leiningen.org/">Leiningen</a></p></li></ul></div></section>
+<section id="_clojure_documentation"><h2>Clojure Documentation</h2><div class="ulist"><ul><li><p><a href="https://clojuredocs.org/">ClojureDocs</a></p></li><li><p><a href="http://crossclj.info/">CrossClj.info</a></p></li><li><p><a href="http://www.clojure-toolbox.com/">Clojure Toolbox</a></p></li></ul></div></section>
+<section id="_clojurescript"><h2>ClojureScript</h2><div class="paragraph"><p>Clojure to Javascript compiler</p></div></section>
+<section id="_pronounciation_test"><h2>Pronounciation test</h2><div class="paragraph"><p>Compiling Clo<em><strong>j</strong></em>ure with Google Clo<em><strong>s</strong></em>ure compiler and utilizing both Clo<em><strong>j</strong></em>ure standard library and Google Clo<em><strong>s</strong></em>ure library.</p></div></section>
+<section id="_everybody_loves_to_transpile"><h2>Everybody loves to transpile!</h2><div class="ulist"><ul><li><p>GWT</p></li><li><p>CofeeScript</p></li><li><p>Dart</p></li><li><p>ES6</p></li><li><p>TypeScript</p></li></ul></div></section>
+<section id="_everybody"><h2>Everybody!!</h2><div class="ulist"><ul><li><p>Scala.js</p></li><li><p>Opal.js (Ruby)</p></li><li><p>Elm (Haskell)</p></li></ul></div></section>
+<section id="_so_why_clojure_to_js"><h2>So why Clojure to JS?</h2><div class="paragraph fragment"><p>full-stack development</p></div>
+<div class="paragraph fragment"><p><strong>core.async</strong></p></div>
+<div class="paragraph fragment small"><small>Implementation of Communicating Sequential Processes</small></div></section>
+<section id="_if_node_existed_in_95"><h2>If node existed in '95</h2><div class="imageblock" style=""><div class="content"><img src="node95.png" alt="node95"></div></div></section>
+<section id="_in_clojurescript"><h2>In ClojureScript</h2><div class="listingblock"><div class="content"><pre class="CodeRay"><code class="clojure language-clojure">(<span class="keyword">ns</span> <span class="namespace">demo</span>
+    (<span class="keyword">require</span> [core.async <span class="symbol">:refer</span> [go &lt;!] <span class="symbol">:include-macros</span> <span class="predefined-constant">true</span>]
+             [floppy <span class="symbol">:refer</span> [&lt;load &lt;prompt]]))
+
+(go (<span class="keyword">let</span> [data1 (&lt;! (&lt;load <span class="string"><span class="delimiter">&quot;</span><span class="content">disk1</span><span class="delimiter">&quot;</span></span>))
+          data2 (&lt;! (&lt;load <span class="string"><span class="delimiter">&quot;</span><span class="content">disk2</span><span class="delimiter">&quot;</span></span> (&lt;! (&lt;propmt <span class="string"><span class="delimiter">&quot;</span><span class="content">insert disk 2</span><span class="delimiter">&quot;</span></span>))))
+          data3 (&lt;! (&lt;load <span class="string"><span class="delimiter">&quot;</span><span class="content">disk3</span><span class="delimiter">&quot;</span></span> (&lt;! (&lt;propmt <span class="string"><span class="delimiter">&quot;</span><span class="content">insert disk 3</span><span class="delimiter">&quot;</span></span>))))
+          data4 (&lt;! (&lt;load <span class="string"><span class="delimiter">&quot;</span><span class="content">disk4</span><span class="delimiter">&quot;</span></span> (&lt;! (&lt;propmt <span class="string"><span class="delimiter">&quot;</span><span class="content">insert disk 4</span><span class="delimiter">&quot;</span></span>))))
+          data5 (&lt;! (&lt;load <span class="string"><span class="delimiter">&quot;</span><span class="content">disk5</span><span class="delimiter">&quot;</span></span> (&lt;! (&lt;propmt <span class="string"><span class="delimiter">&quot;</span><span class="content">insert disk 5</span><span class="delimiter">&quot;</span></span>))))]
+      (process)))</code></pre></div></div></section>
+<section id="_let_s_do_3d_tic_tac_toe"><h2>Let&#8217;s do 3D tic tac toe</h2><div class="imageblock" style="float: left"><div class="content"><img src="3-D_Tic-Tac-Toe_Atari_2600.png" alt="3 D Tic Tac Toe Atari 2600"></div></div>
+<div class="ulist"><ul><li><p>In ClojureScript</p></li><li><p>With ReactJS components</p></li><li><p>With Dynamic evaluation in IDE</p></li></ul></div></section>
+<section id="_create_a_new_project"><h2>Create a new project</h2><div class="literalblock"><div class="content"><pre>lein new reagent tttoe-3d +test</pre></div></div></section></div></div><script src="reveal.js/lib/js/head.min.js"></script><script src="reveal.js/js/reveal.min.js"></script><script type="text/javascript">// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: true,
+  // Display a presentation progress bar
+  progress: true,
+  // Display the page number of the current slide
+  slideNumber: false,
+  // Push each slide change to the browser history
+  history: true,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, blond, default, moon, night, serif, simple, sky, solarized)
+  theme: Reveal.getQueryHash().theme || 'default',
+  // Transition style (e.g., default, cube, page, concave, zoom, linear, fade, none)
+  transition: Reveal.getQueryHash().transition || 'fade',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., default, none, slide, concave, convex, zoom)
+  backgroundTransition: 'default',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      
+      { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+});</script></body></html>
