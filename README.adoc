@@ -1,0 +1,43 @@
+:on-lisp: http://www.paulgraham.com/onlisp.html
+:sicp: http://mitpress.mit.edu/sicp/
+:clojuredocs: https://clojuredocs.org/
+:crossclj: http://crossclj.info/
+:toolbox: http://www.clojure-toolbox.com/
+
+== Clojurescript Tic-Tac-Toe
+
+Talk on ClojuresScript given at http://www.meetup.com/eastcode-sessions/[
+EastCode sessions meetup]. Feel free to submit pull requests, or discuss the code
+in the commit history.
+
+http://pdudits.github.io/cljs-intro/presentation.html[Slides from the talk]
+
+=== Resources
+
+Lisp Books
+
+* {sicp}[Strucure and Interpretation of Computer Programs]
+* {on-lisp}[On LISP]
+
+http://lighttable.com[LighTable IDE]
+
+Clojure Documentation
+
+* {clojuredocs}[ClojureDocs]
+* {crossclj}[CrossClj.info]
+* {toolbox}[Clojure Toolbox]
+
+ClojureScript and ReactJS
+
+* https://github.com/clojure/clojurescript[ClojureScript]
+* http://facebook.github.io/react/[ReactJS]
+* http://reagent-project.github.io/[Reagent]
+* http://clojure.com/blog/2013/06/28/clojure-core-async-channels.html[core.async]
+
+Tutorials
+* http://learn-clojure.com/clojure_tutorials.html[List of tutorials]
+* http://www.braveclojure.com/[Clojure For The Brave And True]
+* http://clojurescriptkoans.com/[ClojureScript Koans]
+* https://www.4clojure.com/[4Clojure]
+
+http://www.tryclj.com/[Try Clojure online REPL]
