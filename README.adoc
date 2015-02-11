@@ -35,6 +35,7 @@ ClojureScript and ReactJS
 * http://clojure.com/blog/2013/06/28/clojure-core-async-channels.html[core.async]
 
 Tutorials
+
 * http://learn-clojure.com/clojure_tutorials.html[List of tutorials]
 * http://www.braveclojure.com/[Clojure For The Brave And True]
 * http://clojurescriptkoans.com/[ClojureScript Koans]
